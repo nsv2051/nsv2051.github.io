@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WiFi二维码</title>
+    <script src="JavaScript/jquery-1.8.3.min.js"></script>
+    <script src="JavaScript/jquery.qrcode.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            //WiFi连接演示
+            $("#wifi_btn").click(function () {
+                var txt = "WIFI:T:" + $('#WiFiType').val() + ";S:" + $('#inputWiFiName').val() + ";P:" + $('#inputWiFiPass').val() + ";;";
+                console.log(txt);
+                outputQRCod(txt, 400, 400);
+            });
+        });
+
+        //中文字符处理
+        function toUtf8(str) {
+            var out, i, len, c;
+            out = "";
+            len = str.length;
+            for (i = 0; i < len; i++) {
+                c = str.charCodeAt(i);
+                if ((c >= 0x0001) && (c <= 0x007F)) {
+                    out += str.charAt(i);
+                } else if (c > 0x07FF) {
+                    out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+                    out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+                    out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+                } else {
+                    out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+                    out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+                }
+            }
+            return out;
+        }
+
+        //生成二维码
+        function outputQRCod(txt, width, height) {
+            //先清空
+            $("#code").empty();
+            //中文格式转换
+            var str = toUtf8(txt);
+            //生成二维码
+            $("#code").qrcode({
+                render: "canvas",
+                width: width,
+                height: height,
+                text: str
+            });
+        }
+
+    </script>
+</head>
+<style>
+    .input {
+        width: 200px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding-left: 5px;
+    }
+    #main {
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+        text-align: center;
+    }
+    #WiFiType {
+        width: 120px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding-left: 5px;
+    }
+    #wifi_btn {
+        width: 85px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding-left: 5px;
+        background-color: #ccc;
+        cursor: pointer;
+    }
+    #code {
+        /* width: 400px;
+        height: 400px; */
+        margin: 0 auto;
+        text-align: center;
+    }
+    #xiaoxi {
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+        text-align: center;
+    }
+    .txt {
+        width: 70%;
+        height: 100%;
+        margin: 0 auto;
+        text-align: left
+    }
+</style>
+<body>
+    <div id="main">
+        <div class="demo">
+            <p>请输入内容然后点击按钮生成二维码：</p>
+            <div id="code"></div>
+
+            <p>
+                WiFi名称：<input type="text" class="input" id="inputWiFiName" value=""><br />
+                <br />
+                WiFi密码：<input type="text" class="input" id="inputWiFiPass" value=""><br />
+                <br />
+                WiFi类型：<select id="WiFiType"><option value="WPA">WPA/WPA2</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">无加密</option>
+                </select>
+                <input type="button" id="wifi_btn" value="生成二维码"><br />
+                <br />
+                <button id="xiazai" onclick="xiazai()">下载二维码</button>
+            </p>
+            <div class="txt">
+                <!-- 居中 -->
+                <h1>这是什么?</h1>
+                <p> 
+                    这个网站可以让你方便地创建一张A4大小的卡片，包含你的WiFi信息和可供手机扫描连接WiFi的二维码。你只需要在👆上面的表格输入WiFi信息，就可以下载二维码了。
+                </p>
+                <h2>好吧，我要这个二维码干嘛？</h2>
+                <p>问得好！ 🤓 这个二维码可以让你用手机或者平板自带的相机，一步到位连接WiFi，省去了寻找WiFi，输入密码等等繁杂的手续。</p>
+                <h2>用这个安全吗？</h2>
+                <p>非常安全！你的WiFi信息会被安全地传输，只用于创建一张卡片，绝不会被储存或者分享给任何人。</p>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function xiazai() {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var url = canvas.toDataURL("image/png");
+        var a = document.createElement('a');
+        var event = new MouseEvent('click');
+        a.download = 'WIFI-QR.png';
+        a.href = url;
+        a.dispatchEvent(event);
+    }
+</script>
+</html>
